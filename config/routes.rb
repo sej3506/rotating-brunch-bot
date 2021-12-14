@@ -15,6 +15,6 @@ Rails.application.routes.draw do
     mount TestOnlyRoutes, at: "/"
   end
 
-  post "/command/doubleup", to: "chatops/slack_slash_command_list#handle", constraints: SlackSlashSubcommandConstraint.new(matches_subcommand: 'list')
+  post "/command/doubleup", to: "chatops/slack_slash_command_list#handle", constraints: SlackSlashSubcommandConstraint.new(matches_subcommand: "list")
   post "/command/doubleup", to: "chatops/slack_slash_command#handle"
 end
