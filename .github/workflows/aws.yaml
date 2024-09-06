@@ -3,7 +3,7 @@ name: AWS Build and Deploy
 on:
   push:
     branches:
-      - main
+      - aws-main
 
 jobs:
   build-and-push:
@@ -19,7 +19,7 @@ jobs:
       ecr_repo: thoughtbot/pair-matchmaker
 
   deploy-staging-sandbox-v1:
-    if: ${{ github.ref == 'refs/heads/main' }}
+    if: ${{ github.ref == 'refs/heads/aws-main' }}
     permissions:
       contents: read
       id-token: write
