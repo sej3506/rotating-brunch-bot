@@ -36,3 +36,23 @@ jobs:
       namespace: pair-matchmaker
       registry_account: '458591407913'
       version: ${{ needs.build-and-push.outputs.version }}
+
+    
+  deploy-production-v1:
+    if: ${{ github.ref == 'refs/heads/production' }}
+    permissions:
+      contents: read
+      id-token: write
+      actions: read
+    name: deploy-production-v1
+    needs: build-and-push
+    concurrency: ${{ github.ref }}
+    uses: ./.github/workflows/deploy.yaml
+    with:
+      cluster_name: thoughtbot-production-v1
+      deploy_role: arn:aws:iam::651913466569:role/pair-matchmaker-deploy
+      image_url: ${{ needs.build-and-push.outputs.image_url }}
+      manifest_path: ./deploy/production
+      namespace: pair-matchmaker
+      registry_account: '458591407913'
+      version: ${{ needs.build-and-push.outputs.version }}
