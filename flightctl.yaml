@@ -1,0 +1,74 @@
+apiVersion: flightctl.thoughtbot.com/v1beta1
+kind: Workspace
+releases:
+- name: thoughtbot-staging
+  application: thoughtbot
+  context: pair-matchmaker-staging
+  environment: staging
+  manifests:
+    path: deploy/staging
+- name: thoughtbot-production
+  application: thoughtbot
+  context: pair-matchmaker-production
+  environment: production
+  manifests:
+    path: deploy/production
+applications:
+- name: thoughtbot
+  manifests:
+    provider: kustomize
+    repo: git@github.com:thoughtbot/pair-matchmaker.git
+  provider: kubectl
+  params:
+    selector:
+      app.kubernetes.io/name: pair-matchmaker
+    console:
+      provider: exec
+      params:
+        selector:
+          app.kubernetes.io/component: console
+        container: main
+        command:
+        - bundle
+        - exec
+        - rails
+        - console
+contexts:
+- name: pair-matchmaker-staging
+  cluster: thoughtbot-sandbox-v1
+  namespace: pair-matchmaker
+  auth: thoughtbot-sandbox-auth
+- name: pair-matchmaker-production
+  cluster: thoughtbot-production-v1
+  namespace: pair-matchmaker
+  auth: thoughtbot-production-auth
+clusters:
+- name: thoughtbot-sandbox-v1
+  auth: thoughtbot-sandbox-auth
+  provider: eks
+  params:
+    name: thoughtbot-sandbox-v1
+    region: us-east-1
+- name: thoughtbot-production-v1
+  auth: thoughtbot-production-auth
+  provider: eks
+  params:
+    name: thoughtbot-production-v1
+    region: us-east-1
+auth:
+- name: thoughtbot-sandbox-auth
+  provider: aws-sso
+  params:
+    region: us-east-1
+    sso_account_id: '181682000713'
+    sso_region: us-east-1
+    sso_role_name: DeveloperAccess
+    sso_start_url: https://thoughtbot.awsapps.com/start
+- name: thoughtbot-production-auth
+  provider: aws-sso
+  params:
+    region: us-east-1
+    sso_account_id: '651913466569'
+    sso_region: us-east-1
+    sso_role_name: DeveloperAccess
+    sso_start_url: https://thoughtbot.awsapps.com/start

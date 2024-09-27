@@ -2,13 +2,19 @@
 
 set -e
 
-FLIGHTCTL_VERSION=0.2.1
+FLIGHTCTL_VERSION=0.3.1
 PREFIX=$(dirname "$(CDPATH='' cd -- "$(dirname -- "$0")" && pwd)")
 FLIGHTCTL_TMP="$PREFIX/tmp"
 FLIGHTCTL_BIN="$FLIGHTCTL_TMP/flightctl-$FLIGHTCTL_VERSION"
 FLIGHTCTL_OS=$(uname 2>/dev/null || echo unknown)
 FLIGHTCTL_ARCH="$(uname -m 2>/dev/null || echo unknown)"
 FLIGHTCTL_REPO="https://github.com/thoughtbot/flightctl"
+
+if ! command -v kubectl > /dev/null; then
+  echo "Please install Kubectl and try again"
+  echo "https://kubernetes.io/docs/tasks/tools/"
+  exit 1
+fi
 
 if [ ! -f "$FLIGHTCTL_BIN" ]; then
   echo "Installing flightctl $FLIGHTCTL_VERSION..." >&2
